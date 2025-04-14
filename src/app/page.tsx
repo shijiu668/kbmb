@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Image from 'next/image';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 import { Switch } from '@headlessui/react';
 
 export default function Home() {
@@ -108,10 +108,13 @@ export default function Home() {
 
             {preview && (
               <div className="mt-8 relative rounded-lg overflow-hidden">
-                <img
+                <Image
                   src={preview}
                   alt="Preview"
+                  width={800}
+                  height={600}
                   className="w-full h-auto rounded-lg"
+                  unoptimized
                 />
               </div>
             )}
@@ -178,10 +181,13 @@ export default function Home() {
               <div className="mt-8">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">处理结果</h3>
                 <div className="mt-4 relative rounded-lg overflow-hidden">
-                  <img
+                  <Image
                     src={processedImageUrl}
                     alt="Processed"
+                    width={800}
+                    height={600}
                     className="w-full h-auto rounded-lg"
+                    unoptimized
                   />
                 </div>
                 <a
