@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { RadioGroup } from '@headlessui/react';
@@ -24,7 +24,6 @@ export default function Home() {
 
   const getImageDimensions = (src: string): Promise<{width: number, height: number}> => {
     return new Promise((resolve) => {
-      // 使用 HTMLImageElement 而不是 new Image()
       const img = document.createElement('img');
       img.onload = () => {
         resolve({
