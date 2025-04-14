@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { RadioGroup } from '@headlessui/react';
@@ -13,27 +13,71 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [processedImageUrl, setProcessedImageUrl] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageInfo, setImageInfo] = useState<{ size: string; dimensions: string } | null>(null);
+  const [processedImageInfo, setProcessedImageInfo] = useState<{ size: string; dimensions: string } | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`;
+    else if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+    else return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  const getImageDimensions = (src: string): Promise<{width: number, height: number}> => {
+    return new Promise((resolve) => {
+      // 使用 HTMLImageElement 而不是 new Image()
+      const img = document.createElement('img');
+      img.onload = () => {
+        resolve({
+          width: img.width,
+          height: img.height
+        });
+      };
+      img.src = src;
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
+      reader.onloadend = async () => {
+        const dataUrl = reader.result as string;
+        setPreview(dataUrl);
+        
+        // 计算文件大小
+        const fileSize = formatFileSize(file.size);
+        
+        // 获取图片尺寸
+        const dimensions = await getImageDimensions(dataUrl);
+        setImageInfo({
+          size: fileSize,
+          dimensions: `${dimensions.width} × ${dimensions.height}`
+        });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file) {
       setFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
+      reader.onloadend = async () => {
+        const dataUrl = reader.result as string;
+        setPreview(dataUrl);
+        
+        // 计算文件大小
+        const fileSize = formatFileSize(file.size);
+        
+        // 获取图片尺寸
+        const dimensions = await getImageDimensions(dataUrl);
+        setImageInfo({
+          size: fileSize,
+          dimensions: `${dimensions.width} × ${dimensions.height}`
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -63,6 +107,13 @@ export default function Home() {
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setProcessedImageUrl(url);
+      
+      // 获取处理后图片信息
+      const dimensions = await getImageDimensions(url);
+      setProcessedImageInfo({
+        size: formatFileSize(blob.size),
+        dimensions: `${dimensions.width} × ${dimensions.height}`
+      });
     } catch (error) {
       console.error('处理出错:', error);
     } finally {
@@ -107,15 +158,23 @@ export default function Home() {
             </div>
 
             {preview && (
-              <div className="mt-8 relative rounded-lg overflow-hidden">
-                <Image
-                  src={preview}
-                  alt="Preview"
-                  width={800}
-                  height={600}
-                  className="w-full h-auto rounded-lg"
-                  unoptimized
-                />
+              <div className="mt-8 space-y-2">
+                <div className="relative rounded-lg overflow-hidden">
+                  <Image
+                    src={preview}
+                    alt="Preview"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto rounded-lg"
+                    unoptimized
+                  />
+                </div>
+                {imageInfo && (
+                  <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 px-2">
+                    <span>大小: {imageInfo.size}</span>
+                    <span>尺寸: {imageInfo.dimensions}</span>
+                  </div>
+                )}
               </div>
             )}
 
@@ -182,15 +241,23 @@ export default function Home() {
             {processedImageUrl && (
               <div className="mt-8">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">处理结果</h3>
-                <div className="mt-4 relative rounded-lg overflow-hidden">
-                  <Image
-                    src={processedImageUrl}
-                    alt="Processed"
-                    width={800}
-                    height={600}
-                    className="w-full h-auto rounded-lg"
-                    unoptimized
-                  />
+                <div className="mt-4 space-y-2">
+                  <div className="relative rounded-lg overflow-hidden">
+                    <Image
+                      src={processedImageUrl}
+                      alt="Processed"
+                      width={800}
+                      height={600}
+                      className="w-full h-auto rounded-lg"
+                      unoptimized
+                    />
+                  </div>
+                  {processedImageInfo && (
+                    <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 px-2">
+                      <span>大小: {processedImageInfo.size}</span>
+                      <span>尺寸: {processedImageInfo.dimensions}</span>
+                    </div>
+                  )}
                 </div>
                 <a
                   href={processedImageUrl}
