@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import { Switch } from '@headlessui/react';
+import { RadioGroup } from '@headlessui/react';
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -129,7 +129,7 @@ export default function Home() {
                     type="number"
                     value={targetSize}
                     onChange={(e) => setTargetSize(Number(e.target.value))}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
               </div>
@@ -139,20 +139,22 @@ export default function Home() {
                   单位
                 </label>
                 <div className="mt-1">
-                  <Switch.Group>
-                    <div className="flex items-center">
-                      <Switch
-                        checked={unit === 'mb'}
-                        onChange={(checked) => setUnit(checked ? 'mb' : 'kb')}
-                        className={`${unit === 'mb' ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-                      >
-                        <span
-                          className={`${unit === 'mb' ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
-                        />
-                      </Switch>
-                      <Switch.Label className="ml-4">{unit.toUpperCase()}</Switch.Label>
-                    </div>
-                  </Switch.Group>
+                  <RadioGroup value={unit} onChange={setUnit} className="flex space-x-4">
+                    <RadioGroup.Option value="kb">
+                      {({ checked }) => (
+                        <div className={`${checked ? 'bg-indigo-600 text-white' : 'bg-white text-gray-900'} relative px-4 py-2 cursor-pointer rounded-lg flex items-center justify-center text-sm font-medium hover:bg-indigo-500 hover:text-white transition-colors`}>
+                          KB
+                        </div>
+                      )}
+                    </RadioGroup.Option>
+                    <RadioGroup.Option value="mb">
+                      {({ checked }) => (
+                        <div className={`${checked ? 'bg-indigo-600 text-white' : 'bg-white text-gray-900'} relative px-4 py-2 cursor-pointer rounded-lg flex items-center justify-center text-sm font-medium hover:bg-indigo-500 hover:text-white transition-colors`}>
+                          MB
+                        </div>
+                      )}
+                    </RadioGroup.Option>
+                  </RadioGroup>
                 </div>
               </div>
             </div>
