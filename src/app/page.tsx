@@ -8,7 +8,7 @@ import { RadioGroup } from '@headlessui/react';
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
-  const [targetSize, setTargetSize] = useState<number | ''>(500);
+  const [targetSize, setTargetSize] = useState<number | string>(500);
   const [unit, setUnit] = useState<'kb' | 'mb'>('kb');
   const [loading, setLoading] = useState(false);
   const [processedImageUrl, setProcessedImageUrl] = useState<string>('');
