@@ -186,8 +186,8 @@ export default function Home() {
                   <input
                     type="number"
                     value={targetSize}
-                    onChange={(e) => {
-                      const value = e.target.value;
+                    onInput={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
                       // 修复在部署环境中无法输入数字的问题
                       // 当输入为空时保持为空字符串，否则转换为数字
                       if (value === '') {
@@ -195,6 +195,18 @@ export default function Home() {
                       } else {
                         const numValue = Number(value);
                         // 确保值是有效数字
+                        if (!isNaN(numValue)) {
+                          setTargetSize(numValue);
+                        }
+                      }
+                    }}
+                    // 保留onChange事件作为备份处理方式
+                    onChange={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      if (value === '') {
+                        setTargetSize('');
+                      } else {
+                        const numValue = Number(value);
                         if (!isNaN(numValue)) {
                           setTargetSize(numValue);
                         }
