@@ -8,7 +8,7 @@ import { RadioGroup } from '@headlessui/react';
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
-  const [targetSize, setTargetSize] = useState<number>(500);
+  const [targetSize, setTargetSize] = useState<number | string>(500);
   const [unit, setUnit] = useState<'kb' | 'mb'>('kb');
   const [loading, setLoading] = useState(false);
   const [processedImageUrl, setProcessedImageUrl] = useState<string>('');
@@ -186,7 +186,10 @@ export default function Home() {
                   <input
                     type="number"
                     value={targetSize}
-                    onChange={(e) => setTargetSize(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setTargetSize(value === '' ? '' : Number(value));
+                    }}
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
