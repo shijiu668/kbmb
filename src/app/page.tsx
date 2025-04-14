@@ -1,103 +1,202 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useRef } from 'react';
+import Image from 'next/image';
+import { ArrowUpTrayIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { Switch } from '@headlessui/react';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string>('');
+  const [targetSize, setTargetSize] = useState<number>(500);
+  const [unit, setUnit] = useState<'kb' | 'mb'>('kb');
+  const [loading, setLoading] = useState(false);
+  const [processedImageUrl, setProcessedImageUrl] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      setFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleProcess = async () => {
+    if (!file) return;
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('targetSize', targetSize.toString());
+      formData.append('unit', unit);
+
+      const response = await fetch('/api/resize', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('处理失败');
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setProcessedImageUrl(url);
+    } catch (error) {
+      console.error('处理出错:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
+            图片尺寸调整器
+          </h1>
+          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+            上传图片，设置目标大小，我们将为您生成最佳质量的压缩图片
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        <div className="mt-16 flex flex-col items-center">
+          <div
+            className="w-full max-w-3xl p-8 rounded-2xl bg-white dark:bg-gray-800 shadow-lg backdrop-blur-lg backdrop-filter"
+            style={{ background: 'rgba(255, 255, 255, 0.8)' }}
+          >
+            <div
+              className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-12 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors duration-150 ease-in-out cursor-pointer"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                className="hidden"
+              />
+              <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                拖拽图片到此处或点击上传
+              </p>
+            </div>
+
+            {preview && (
+              <div className="mt-8 relative rounded-lg overflow-hidden">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-full h-auto rounded-lg"
+                />
+              </div>
+            )}
+
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  目标大小
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="number"
+                    value={targetSize}
+                    onChange={(e) => setTargetSize(Number(e.target.value))}
+                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  单位
+                </label>
+                <div className="mt-1">
+                  <Switch.Group>
+                    <div className="flex items-center">
+                      <Switch
+                        checked={unit === 'mb'}
+                        onChange={(checked) => setUnit(checked ? 'mb' : 'kb')}
+                        className={`${unit === 'mb' ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                      >
+                        <span
+                          className={`${unit === 'mb' ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                        />
+                      </Switch>
+                      <Switch.Label className="ml-4">{unit.toUpperCase()}</Switch.Label>
+                    </div>
+                  </Switch.Group>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <button
+                onClick={handleProcess}
+                disabled={!file || loading}
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${(!file || loading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {loading ? (
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : (
+                  <>
+                    <ArrowDownTrayIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+                    开始处理
+                  </>
+                )}
+              </button>
+            </div>
+
+            {processedImageUrl && (
+              <div className="mt-8">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">处理结果</h3>
+                <div className="mt-4 relative rounded-lg overflow-hidden">
+                  <img
+                    src={processedImageUrl}
+                    alt="Processed"
+                    className="w-full h-auto rounded-lg"
+                  />
+                </div>
+                <a
+                  href={processedImageUrl}
+                  download="processed-image.jpg"
+                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <ArrowDownTrayIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+                  下载图片
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
