@@ -188,7 +188,17 @@ export default function Home() {
                     value={targetSize}
                     onChange={(e) => {
                       const value = e.target.value;
-                      setTargetSize(value === '' ? '' : Number(value));
+                      // 修复在部署环境中无法输入数字的问题
+                      // 当输入为空时保持为空字符串，否则转换为数字
+                      if (value === '') {
+                        setTargetSize('');
+                      } else {
+                        const numValue = Number(value);
+                        // 确保值是有效数字
+                        if (!isNaN(numValue)) {
+                          setTargetSize(numValue);
+                        }
+                      }
                     }}
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
