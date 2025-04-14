@@ -126,7 +126,9 @@ export default function Home() {
                 </label>
                 <div className="mt-1">
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={targetSize}
                     onChange={(e) => setTargetSize(Number(e.target.value))}
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
@@ -139,20 +141,22 @@ export default function Home() {
                   单位
                 </label>
                 <div className="mt-1">
-                  <Switch.Group>
-                    <div className="flex items-center">
-                      <Switch
-                        checked={unit === 'mb'}
-                        onChange={(checked) => setUnit(checked ? 'mb' : 'kb')}
-                        className={`${unit === 'mb' ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-                      >
-                        <span
-                          className={`${unit === 'mb' ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
-                        />
-                      </Switch>
-                      <Switch.Label className="ml-4">{unit.toUpperCase()}</Switch.Label>
-                    </div>
-                  </Switch.Group>
+                  <div className="flex space-x-4">
+                    <button
+                      type="button"
+                      onClick={() => setUnit('kb')}
+                      className={`${unit === 'kb' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 dark:bg-gray-700 dark:text-gray-300'} px-4 py-2 rounded-md text-sm font-medium border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                    >
+                      KB
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setUnit('mb')}
+                      className={`${unit === 'mb' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 dark:bg-gray-700 dark:text-gray-300'} px-4 py-2 rounded-md text-sm font-medium border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                    >
+                      MB
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
