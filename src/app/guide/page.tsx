@@ -34,7 +34,7 @@ export default function Guide() {
               <div>
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">3. Start Compression</h3>
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                  Click the "Start Processing" button and wait for completion. Compression speed depends on image size and network conditions, typically taking just a few seconds.
+                  Click the &quot;Start Processing&quot; button and wait for completion. Compression speed depends on image size and network conditions, typically taking just a few seconds.
                 </p>
               </div>
               <div>
