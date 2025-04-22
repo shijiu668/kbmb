@@ -19,14 +19,14 @@ export default function Features() {
           <section className="mb-12 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Smart Compression Algorithm</h2>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-              Our compression algorithm uses advanced image processing technology to significantly reduce file size while maintaining visual quality. Whether it's photos, charts, or artwork, you'll get the best compression results.
+              Our compression algorithm uses advanced image processing technology to significantly reduce file size while maintaining visual quality. Whether it&apos;s photos, charts, or artwork, you&apos;ll get the best compression results.
             </p>
           </section>
 
           <section className="mb-12 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Precise Size Control</h2>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-              Supports precise control in KB and MB units, allowing you to set target file sizes according to specific needs. Whether it's website optimization or email attachments, you can easily meet size limit requirements.
+              Supports precise control in KB and MB units, allowing you to set target file sizes according to specific needs. Whether it&apos;s website optimization or email attachments, you can easily meet size limit requirements.
             </p>
           </section>
 
