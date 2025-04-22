@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import Navigation from "@/components/Navigation";
 import "./globals.css";
 
 const geist = Geist({
@@ -39,7 +40,10 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className={geist.className}>{children}</body>
+      <body className={geist.className}>
+        <Navigation />
+        {children}
+      </body>
     </html>
   );
 }
